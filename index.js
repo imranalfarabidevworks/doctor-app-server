@@ -7,19 +7,20 @@ const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
-app.use(cors({
-  origin: [
-    "https://doctor-app-client-opal.vercel.app",
-    "https://doctor-app-client.vercel.app",
-    "http://localhost:3000"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
+// ✅ CORS - সবার আগে
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://doctor-app-client-opal.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  next();
+});
+
 app.use(express.json());
 
 const uri = process.env.MONGODB_URI;
@@ -30,6 +31,7 @@ const client = new MongoClient(uri, {
     strict: true,
     deprecationErrors: true,
   },
+  family: 4,
 });
 
 async function run() {
@@ -42,7 +44,6 @@ async function run() {
 
     console.log("MongoDB Connected ✅");
 
-    // ---------------- DOCTORS ----------------
     app.get("/doctors", async (req, res) => {
       try {
         const result = await doctorsCollection.find().toArray();
@@ -68,8 +69,6 @@ async function run() {
       }
     });
 
-    // ---------------- APPOINTMENTS ----------------
-
     app.get("/appointments", async (req, res) => {
       try {
         const result = await appointmentsCollection.find().toArray();
@@ -82,7 +81,7 @@ async function run() {
     app.get("/appointments/:email", async (req, res) => {
       try {
         const email = req.params.email;
-        const result = await appointmentsCollection.find({ email: email }).toArray();
+        const result = await appointmentsCollection.find({ email }).toArray();
         res.send({ success: true, data: result });
       } catch (error) {
         res.status(500).send({ success: false, message: "Failed to fetch appointments" });
@@ -133,8 +132,6 @@ async function run() {
       }
     });
 
-    // ---------------- REGISTER & LOGIN ----------------
-
     app.post("/register", async (req, res) => {
       try {
         const { email, password, name } = req.body;
@@ -147,10 +144,7 @@ async function run() {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await doctorsCollection.insertOne({
-          email,
-          password: hashedPassword,
-          name,
-          role: "user",
+          email, password: hashedPassword, name, role: "user",
         });
         res.send({ success: true, insertedId: result.insertedId });
       } catch (error) {
@@ -178,12 +172,12 @@ async function run() {
       }
     });
 
-    app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));
-
   } catch (error) {
     console.log("Connection error:", error);
-    process.exit(1);
   }
 }
 
 run();
+
+//Vercel for export
+module.exports = app;

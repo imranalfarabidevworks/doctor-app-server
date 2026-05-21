@@ -11,9 +11,14 @@ const PORT = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.use(cors({
-  origin: "https://doctor-app-client-opal.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: [
+    "https://doctor-app-client-opal.vercel.app",
+    "https://doctor-app-client.vercel.app",
+    "http://localhost:3000"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json());
 

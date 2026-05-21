@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/imranalfarabidevworks/doctor-app-server#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "cros": "^1.1.0",
     "express": "^5.2.1",

@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
   family: 4,
 });
 
-// ✅ DB connection একবার
+// DB connection
 let db, doctorsCollection, appointmentsCollection;
 
 async function connectDB() {
@@ -37,7 +37,7 @@ async function connectDB() {
   }
 }
 
-// ✅ Routes বাইরে
+//Routes
 app.get("/doctors", async (req, res) => {
   try {
     await connectDB();
@@ -84,7 +84,7 @@ app.get("/appointments/:email", async (req, res) => {
 
 app.post("/appointments", async (req, res) => {
   try {
-    await connectDB();
+    //await connectDB();
     const appointment = req.body;
     const { doctorName, email, patientName, gender, phone, appointmentDate, appointmentTime } = appointment;
     if (!doctorName || !email || !patientName || !gender || !phone || !appointmentDate || !appointmentTime) {
@@ -93,6 +93,7 @@ app.post("/appointments", async (req, res) => {
     const result = await appointmentsCollection.insertOne(appointment);
     res.send({ success: true, insertedId: result.insertedId });
   } catch (error) {
+    console.log(error)
     res.status(500).send({ success: false, message: "Failed to save appointment" });
   }
 });

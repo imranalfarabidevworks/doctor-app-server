@@ -93,7 +93,6 @@ app.post("/appointments", async (req, res) => {
     const result = await appointmentsCollection.insertOne(appointment);
     res.send({ success: true, insertedId: result.insertedId });
   } catch (error) {
-    console.log(error)
     res.status(500).send({ success: false, message: "Failed to save appointment" });
   }
 });

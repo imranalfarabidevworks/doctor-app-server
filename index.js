@@ -1,5 +1,5 @@
-const dns = require("node:dns");
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+process.env.NODE_OPTIONS = '--dns-result-order=ipv4first';
 
 const express = require("express");
 const app = express();
@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const uri = process.env.MONGODB_URI;
-
+const uri = "mongodb+srv://doctors:RlXqeRM8ea339Ual@cluster0.wwzakej.mongodb.net/?appName=Cluster0&family=4";
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,

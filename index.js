@@ -4,13 +4,16 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const bcrypt = require("bcrypt"); // password hash এর জন্য
+const bcrypt = require("bcrypt"); 
+const dotenv = require("dotenv");
+dotenv.config();
+const PORT = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.use(cors());
 app.use(express.json());
 
-const uri = "mongodb+srv://docUse:dfa77xz3q8DvgYV9@cluster0.wwzakej.mongodb.net/?appName=Cluster0&retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI;
 
 const client = new MongoClient(uri, {
   serverApi: {
